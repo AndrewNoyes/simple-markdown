@@ -916,6 +916,11 @@ _.each(Object.keys(defaultRules), function(type, i) {
 });
 
 var ruleOutput = function(rules, property) {
+    if (!property && typeof console !== "undefined") {
+        console.warn("simple-markdown ruleOutput should take 'react' or " +
+            "'html' as the second argument."
+        );
+    }
     // deprecated:
     property = property || "react";
     var nestedRuleOutput = function(ast, outputFunc, state) {
