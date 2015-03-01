@@ -210,6 +210,20 @@ var reactFor = function(outputFunc) {
 };
 
 var reactElement = function(element) {
+    // Debugging assertions. To be commented out when committed
+    // TODO(aria): Figure out a better way of having dev asserts
+/*
+    if (typeof element.props !== "object") {
+        throw new Error("props of " + element.type + " must be an object");
+    }
+    if (!element._isReactElement) {
+        throw new Error(
+            "must set _isReactElement on element " +
+            element.type
+        );
+    }
+*/
+
     // This should just override an already present element._store, which
     // exists so that the class of this object doesn't change in V8
     element._store = {
@@ -218,6 +232,8 @@ var reactElement = function(element) {
     };
     return element;
 };
+
+var EMPTY_PROPS = {};
 
 var sanitizeUrl = function(url) {
     if (url == null) {
@@ -486,6 +502,7 @@ var defaultRules = {
             return reactElement({
                 type: 'hr',
                 key: state.key,
+                props: EMPTY_PROPS,
                 _isReactElement: true,
                 _store: null,
             });
@@ -1062,6 +1079,7 @@ var defaultRules = {
             return reactElement({
                 type: 'br',
                 key: state.key,
+                props: EMPTY_PROPS,
                 _isReactElement: true,
                 _store: null,
             });

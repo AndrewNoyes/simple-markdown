@@ -58,6 +58,11 @@ var htmlFromMarkdown = function(source) {
     return htmlThroughReact(implicitParse(source));
 };
 
+var assertParsesToReact = function(source, html) {
+    var actualHtml = htmlFromMarkdown(source);
+    assert.strictEqual(actualHtml, html);
+};
+
 describe("simple markdown", function() {
     describe("parser", function() {
         it("should parse a plain string", function() {
@@ -1444,6 +1449,36 @@ describe("simple markdown", function() {
             }]);
         });
 
+        it("should allow indentation inside code blocks", function() {
+            var parsed = blockParse(
+                "```\n" +
+                "if (true === false) {\n" +
+                "    throw 'world does not exist';\n" +
+                "}\n" +
+                "```\n\n"
+            );
+            validateParse(parsed, [{
+                type: "codeBlock",
+                lang: undefined,
+                content: (
+                    "if (true === false) {\n" +
+                    "    throw 'world does not exist';\n" +
+                    "}"
+                ),
+            }]);
+
+            var parsed = blockParse(
+                "~~~\n" +
+                "    this should be indented\n" +
+                "~~~\n\n"
+            );
+            validateParse(parsed, [{
+                type: "codeBlock",
+                lang: undefined,
+                content: "    this should be indented",
+            }]);
+        });
+
         it("should parse mixed paragraphs and code", function() {
             var parsed = blockParse(
                 "this is regular text\n\n" +
@@ -2419,6 +2454,65 @@ describe("simple markdown", function() {
                 "<div class=\"paragraph\">" +
                     "<a href=\"https://www.google.com\">link</a>" +
                 "</div>"
+            );
+        });
+
+        it("should output hrs", function() {
+            assertParsesToReact(
+                "-----\n\n",
+                "<hr>"
+            );
+        });
+
+        it("should output paragraphs", function() {
+            var html = htmlFromMarkdown(
+                "hi\n\n"
+            );
+            assert.strictEqual(
+                html,
+                '<div class="paragraph">hi</div>'
+            );
+
+            var html2 = htmlFromMarkdown(
+                "hi\n\n" +
+                "bye\n\n"
+            );
+            assert.strictEqual(
+                html2,
+                '<div class="paragraph">hi</div>' +
+                '<div class="paragraph">bye</div>'
+            );
+        });
+
+        it("should output codeblocks", function() {
+            var html = htmlFromMarkdown(
+                "    var microwave = new TimeMachine();\n\n"
+            );
+            assert.strictEqual(
+                html,
+                "<pre><code>var microwave = new TimeMachine();</code></pre>"
+            );
+
+            var html2 = htmlFromMarkdown(
+                "~~~\n" +
+                "var computer = new IBN(5100);\n" +
+                "~~~\n\n"
+            );
+            assert.strictEqual(
+                html2,
+                "<pre><code>var computer = new IBN(5100);</code></pre>"
+            );
+
+            var html3 = htmlFromMarkdown(
+                "```yavascript\n" +
+                "var undefined = function() { return 5; }" +
+                "```\n\n"
+            );
+            assert.strictEqual(
+                html3,
+                '<pre><code class="markdown-code-yavascript">' +
+                'var undefined = function() { return 5; }' +
+                '</code></pre>'
             );
         });
     });
