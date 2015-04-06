@@ -18,11 +18,5 @@
   "bugs": {
     "url": "https://github.com/Khan/simple-markdown/issues"
   },
-  "homepage": "https://github.com/Khan/simple-markdown",
-  "devDependencies": {
-    "mocha": "^1.21.5",
-    "react-tools": ">=0.13.0-rc2",
-    "underscore": "^1.4.4",
-    "react": ">=0.13.0-rc2"
-  }
+  "homepage": "https://github.com/Khan/simple-markdown"
 }
